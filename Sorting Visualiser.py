@@ -75,23 +75,72 @@ def insertionsort2(b, vals):
         vals[1] += 1
     return b, vals
 
-def msort(x,vals):
-    global timecount, timesthrough
-    if timesthrough == 0:
-        if x[vals[0]] >= x[vals[1]]:
-            temp = x[vals[0]]
-            x[vals[0]] = x[vals[1]]
-            x[vals[1]] = temp
-        vals[0]+=2
-        vals[1]+=2
-        timecount += 1
-    if timecount == len(x)//2:
-        timesthrough += 1
-        vals[0] = 0
-        vals[1] = 1
-    if timesthrough == 1:
-        x.sort()
-    return x,vals
+# def mersort(x,vals):
+#     global timecount, timesthrough
+#     if timesthrough == 0:
+#         if x[vals[0]] >= x[vals[1]]:
+#             temp = x[vals[0]]
+#             x[vals[0]] = x[vals[1]]
+#             x[vals[1]] = temp
+#         vals[0]+=2
+#         vals[1]+=2
+#         timecount += 1
+#     if timecount == len(x)//2:
+#         timesthrough += 1
+#         vals[0] = 0
+#         vals[1] = 1
+#     if timesthrough == 1:
+#         x.sort()
+#     return x,vals
+
+def msort(b, vals):
+    def merge(b, left, mid, right):
+        left_sublist = b[left:mid]
+        right_sublist = b[mid:right]
+        i = j = 0
+        k = left
+
+        while i < len(left_sublist) and j < len(right_sublist):
+            if left_sublist[i] <= right_sublist[j]:
+                b[k] = left_sublist[i]
+                i += 1
+            else:
+                b[k] = right_sublist[j]
+                j += 1
+            k += 1
+
+        while i < len(left_sublist):
+            b[k] = left_sublist[i]
+            i += 1
+            k += 1
+        while j < len(right_sublist):
+            b[k] = right_sublist[j]
+            j += 1
+            k += 1
+
+    left, mid, right = vals
+
+    mid = min(mid, len(b))
+    right = min(right, len(b))
+
+    if mid < right:
+        merge(b, left, mid, right)
+    
+    new_left = left + (right - left) * 2
+    new_mid = min(new_left + (mid - left), len(b))
+    new_right = min(new_mid + (mid - left), len(b))
+
+    if new_left >= len(b):
+        left = 0
+        mid = 1
+        right = min(2, len(b))
+    else:
+        left = new_left
+        mid = new_mid
+        right = new_right
+
+    vals[:] = [left, mid, right]
+    return b, vals
 
 def stalinsort(k,vals):
     global GotIt
@@ -135,14 +184,18 @@ def drawsorts():
     if sortingalg == 'B':
         pygame.draw.rect(display, GREEN,[vals[1]*(1000//length),600-(k[vals[1]]//2),(1000//length),k[vals[1]]//2])
     else:
-        for i in range(0,2):
-            pygame.draw.rect(display, GREEN,[vals[i]*(1000//length),600-(k[vals[i]]//2),(1000//length),k[vals[i]]//2])
+        for i in range(0, 2):
+            if vals[i] < len(k):
+                pygame.draw.rect(display, GREEN, [vals[i] * (1000 // length), 600 - (k[vals[i]] // 2), (1000 // length), k[vals[i]] // 2])
 
 sortingalg = str(input("PICK A SORTING ALGORITHM TO VISUALISE:\nA) BUBBLE SORT\nB) INSERTION SORT\nC) MERGE SORT\nD) STALIN SORT\n>")).upper()
 
 display = pygame.display.set_mode((1000,600))
 pygame.display.set_caption("Sorting Visualiser")
-vals[2] == k[0]
+if sortingalg == "C":
+    vals = [0,1,length]
+else:
+    vals[2] == k[0]
 
 
 while carryOn:

@@ -8,6 +8,7 @@ GotIt = False
 comparisons = 0
 font = pygame.font.Font("BAHNSCHRIFT.TTF",20)
 frfont = pygame.font.Font("BAHNSCHRIFT.TTF",15)
+lfont = pygame.font.Font("BAHNSCHRIFT.TTF",90)
 timecount = 0
 timesthrough = 0
 
@@ -93,54 +94,70 @@ def insertionsort2(b, vals):
 #         x.sort()
 #     return x,vals
 
-def msort(b, vals):
-    def merge(b, left, mid, right):
-        left_sublist = b[left:mid]
-        right_sublist = b[mid:right]
-        i = j = 0
-        k = left
+# def msort(b, vals):
+#     def merge(b, left, mid, right):
+#         left_sublist = b[left:mid]
+#         right_sublist = b[mid:right]
+#         i = j = 0
+#         k = left
 
-        while i < len(left_sublist) and j < len(right_sublist):
-            if left_sublist[i] <= right_sublist[j]:
-                b[k] = left_sublist[i]
-                i += 1
-            else:
-                b[k] = right_sublist[j]
-                j += 1
-            k += 1
+#         while i < len(left_sublist) and j < len(right_sublist):
+#             if left_sublist[i] <= right_sublist[j]:
+#                 b[k] = left_sublist[i]
+#                 i += 1
+#             else:
+#                 b[k] = right_sublist[j]
+#                 j += 1
+#             k += 1
 
-        while i < len(left_sublist):
-            b[k] = left_sublist[i]
-            i += 1
-            k += 1
-        while j < len(right_sublist):
-            b[k] = right_sublist[j]
-            j += 1
-            k += 1
+#         while i < len(left_sublist):
+#             b[k] = left_sublist[i]
+#             i += 1
+#             k += 1
+#         while j < len(right_sublist):
+#             b[k] = right_sublist[j]
+#             j += 1
+#             k += 1
 
-    left, mid, right = vals
+#     left, mid, right = vals
 
-    mid = min(mid, len(b))
-    right = min(right, len(b))
+#     mid = min(mid, len(b))
+#     right = min(right, len(b))
 
-    if mid < right:
-        merge(b, left, mid, right)
+#     if mid < right:
+#         merge(b, left, mid, right)
     
-    new_left = left + (right - left) * 2
-    new_mid = min(new_left + (mid - left), len(b))
-    new_right = min(new_mid + (mid - left), len(b))
+#     new_left = left + (right - left) * 2
+#     new_mid = min(new_left + (mid - left), len(b))
+#     new_right = min(new_mid + (mid - left), len(b))
 
-    if new_left >= len(b):
-        left = 0
-        mid = 1
-        right = min(2, len(b))
-    else:
-        left = new_left
-        mid = new_mid
-        right = new_right
+#     if new_left >= len(b):
+#         left = 0
+#         mid = 1
+#         right = min(2, len(b))
+#     else:
+#         left = new_left
+#         mid = new_mid
+#         right = new_right
 
-    vals[:] = [left, mid, right]
-    return b, vals
+#     vals[:] = [left, mid, right]
+#     return b, vals
+def msort(k, vals):
+    if vals[2] == 0:
+        vals[0]+= 1
+        vals[1] += 1
+        if vals[1] >= len(k):
+            vals[0] -= 1
+            vals[1] -= 1
+            vals[2] = 1
+    elif vals[2] == 1:
+        vals[0] -= 1
+        vals[1] -= 1
+        if vals[0] <= 0:
+            vals[0] += 1
+            vals[1] += 1
+            vals[2] = 0
+    return vals
 
 def stalinsort(k,vals):
     global GotIt
@@ -193,9 +210,9 @@ sortingalg = str(input("PICK A SORTING ALGORITHM TO VISUALISE:\nA) BUBBLE SORT\n
 display = pygame.display.set_mode((1000,600))
 pygame.display.set_caption("Sorting Visualiser")
 if sortingalg == "C":
-    vals = [0,1,length]
+    vals = [0,1,0]
 else:
-    vals[2] == k[0]
+    vals[2] = k[0]
 
 
 while carryOn:
@@ -212,7 +229,11 @@ while carryOn:
         insertionsort2(k,vals)
         alg = "Insertion Sort"
     elif sortingalg == 'C' and GotIt == False:
-        msort(k,vals)
+        text = lfont.render("Sorry, doesn't work!", 1, GREEN)
+        display.blit(text, (200,5))
+        text = frfont.render("Don't really know why... Mergesort step by step doesn't seem to work. The other sorts work though :) Watch the green dance!", 1, GREEN)
+        display.blit(text, (170,98))
+        vals = msort(k,vals)
         alg = "Merge Sort"
     elif sortingalg == 'D' and GotIt == False:
         stalinsort(k,vals)
